@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import click, json, os, sys, pathlib
 
-from config import load, SKILLS_DIR, AGENTS_DIRS
+from config import load, save, SKILLS_DIR, AGENTS_DIRS
 from client import LLMClient
 from tools import execute, get_schemas
 from ui import console, get_input, show_header, AssistantStream, show_info, show_error, show_status, set_prompt_mode
@@ -258,7 +258,25 @@ def main(base_url, model, api_key, task):
     if model: cfg["model"] = model
     if api_key: cfg["api_key"] = api_key
 
-    client = LLMClient(cfg["base_url"], cfg["api_key"], cfg["model"])
+    if base_url or model or api_key:
+        save({
+            "base_url": base_url or cfg["base_url"],
+            "api_key": api_key or cfg["api_key"],
+            "model": model or cfg["model"],
+        })
+
+    if not cfg.get("api_key"):
+        console.print(Panel(
+            "⚠️  Belum ada API key.\n\n"
+            "Set dengan salah satu:\n"
+            "  export DWCODE_API_KEY=sk-xxx\n"
+            "  dwcode --api-key sk-xxx\n"
+            "  ~/.config/dwcode/config.json",
+            title="DWCode — API Key Required",
+            border_style="yellow",
+        ))
+
+    client = LLMClient(cfg["base_url"], cfg["api_key"] or "skip", cfg["model"])
     tool_schemas = get_schemas()
 
     global MODE
@@ -356,14 +374,6 @@ def main(base_url, model, api_key, task):
         if user_input is None:
             break
         if not user_input:
-            continue
-
-        if user_input == "__TOGGLE__":
-            MODE = "build" if MODE == "plan" else "plan"
-            set_prompt_mode(MODE)
-            system_msg["content"] = _rebuild_system()
-            if messages and messages[0].get("role") == "system":
-                messages[0] = system_msg
             continue
 
         if user_input.startswith("/"):
