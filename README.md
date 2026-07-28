@@ -22,6 +22,12 @@ pip install git+https://github.com/heydeden/dwcode
 ```
 
 Rust diperlukan karena dependency `jiter` perlu di-compile.
+Tapi kalo mau skip Rust, download wheel pre-built dari [Releases](https://github.com/heydeden/dwcode/releases):
+
+```bash
+# Download .whl dari https://github.com/heydeden/dwcode/releases
+pip install dwcode-*.whl
+```
 
 ```bash
 # Install 9router
