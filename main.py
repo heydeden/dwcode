@@ -264,6 +264,14 @@ def main(base_url, model, api_key, task, update):
              "git+https://github.com/heydeden/dwcode"],
             capture_output=True, text=True, timeout=120,
         )
+        if r.returncode != 0 and "externally-managed" in r.stderr:
+            console.print("⚠️  System python dilindungi, coba dengan --break-system-packages...")
+            r = subprocess.run(
+                [pip, "install", "--break-system-packages",
+                 "--upgrade", "--force-reinstall",
+                 "git+https://github.com/heydeden/dwcode"],
+                capture_output=True, text=True, timeout=120,
+            )
         if r.returncode == 0:
             console.print(Panel("✅ DWCode updated!", title="Update", border_style="green"))
         else:
