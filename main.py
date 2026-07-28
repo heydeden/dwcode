@@ -253,7 +253,23 @@ def handle_command(cmd_line):
 @click.option("--model", help="Model name")
 @click.option("--api-key", help="API key")
 @click.option("--task", "-t", help="Single task (non-interactive)")
-def main(base_url, model, api_key, task):
+@click.option("--update", is_flag=True, help="Update DWCode ke versi terbaru")
+def main(base_url, model, api_key, task, update):
+    if update:
+        import subprocess, sys
+        console.print("⏳ Update DWCode...")
+        pip = sys.executable.replace("python", "pip")
+        r = subprocess.run(
+            [pip, "install", "--upgrade", "--force-reinstall",
+             "git+https://github.com/heydeden/dwcode"],
+            capture_output=True, text=True, timeout=120,
+        )
+        if r.returncode == 0:
+            console.print(Panel("✅ DWCode updated!", title="Update", border_style="green"))
+        else:
+            console.print(Panel(f"❌ Gagal:\n{r.stderr[:300]}", title="Error", border_style="red"))
+        return
+
     cfg = load()
     if base_url: cfg["base_url"] = base_url
     if model: cfg["model"] = model
