@@ -302,7 +302,6 @@ def main(base_url, model, api_key, task, update):
         client = None
         tool_schemas = None
     else:
-        show_header(MODE, cfg["model"])
         client = LLMClient(cfg["base_url"], cfg["api_key"], cfg["model"])
         tool_schemas = get_schemas()
 
