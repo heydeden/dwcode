@@ -1,6 +1,6 @@
 import os, subprocess, json
 from pathlib import Path
-from config import SKILLS_DIR
+from config import SKILLS_DIR, AGENTS_DIRS
 
 BLOCKED_COMMANDS = ["rm", "sudo", "dd", "mkfs", ">", ">>", "|", "chmod", "chown", "kill"]
 
@@ -153,7 +153,25 @@ tool(
     fn=lambda args, mode: _unload_skill_impl(args),
 )
 
+# ── Agent Tools ──────────────────────────────────────
 
+tool(
+    name="list_agents",
+    description="List all available agents with their descriptions.",
+    params={},
+    required=[],
+    fn=lambda args, mode: _list_agents_impl(),
+)
+
+tool(
+    name="load_agent",
+    description="Load an agent by name. The agent prompt will replace the current system prompt.",
+    params={
+        "name": {"type": "string", "description": "Agent name (e.g. sec-bounty, sec-web, sec-polar, fullstack-developer)"},
+    },
+    required=["name"],
+    fn=lambda args, mode: _load_agent_impl(args),
+)
 
 # ── Implementations ──────────────────────────────────
 
@@ -336,5 +354,44 @@ def _unload_skill_impl(args):
     if name == "all":
         return "✅ Semua skill akan diunload."
     return f"✅ Skill `{name}` akan diunload."
+
+# ── Agent Implementation ────────────────────────────
+
+def _list_agents_impl():
+    seen = set()
+    result = ["📚 Available agents:"]
+    for d in AGENTS_DIRS:
+        if d.exists():
+            for f in sorted(d.glob("*.md")):
+                name = f.stem
+                if name in seen:
+                    continue
+                seen.add(name)
+                desc = ""
+                for line in f.read_text().split("\n"):
+                    if line.startswith("description:"):
+                        desc = line.split(":", 1)[1].strip().strip('"')
+                        break
+                result.append(f"  **@{name}** — {desc}")
+    if len(result) == 1:
+        return "Tidak ada agent."
+    return "\n".join(result)
+
+def _load_agent_impl(args):
+    name = args.get("name", "").strip()
+    if not name:
+        return "⚠️ Nama agent diperlukan."
+    for d in AGENTS_DIRS:
+        p = d / f"{name}.md"
+        if p.exists():
+            content = p.read_text()
+            body = content.split("---", 2)[-1].strip() if content.startswith("---") else content
+            return body
+    available = set()
+    for d in AGENTS_DIRS:
+        if d.exists():
+            for f in d.glob("*.md"):
+                available.add(f.stem)
+    return f"⚠️ Agent `{name}` tidak ditemukan.\n\nTersedia: {', '.join(sorted(available))}"
 
 

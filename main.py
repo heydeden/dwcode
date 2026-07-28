@@ -5,7 +5,7 @@ from config import load, save, SKILLS_DIR, AGENTS_DIRS
 from client import LLMClient
 from tools import execute, get_schemas
 from rich.panel import Panel
-from ui import console, get_input, show_header, AssistantStream, show_info, show_error, show_status, set_prompt_mode
+from ui import console, get_input, show_header, AssistantStream, show_info, show_error, show_status, set_prompt_mode, reload_completions
 
 MODE = "plan"
 
@@ -47,17 +47,13 @@ sebelum mengerjakan task. Bisa load banyak skill sekaligus.
 ## Agents
 Agent adalah AI specialized dengan role dan permission sendiri.
 Gunakan `/agent <nama>` untuk switch, atau kirim `@nama` di chat.
-Ketik `/agents` untuk lihat daftar lengkap.
+Ketik `/agents` atau tool `list_agents()` untuk lihat daftar lengkap.
 
 Bedakan Skill vs Agent:
 - **Skill** = pengetahuan/teknik (load dengan `load_skill()`)
 - **Agent** = AI dengan identitas dan permission khusus (panggil dengan `@nama`)
 
-Agent yang tersedia:
-- `@sec-bounty` — Bug bounty hunter
-- `@sec-web` — Web security auditor
-- `@sec-polar` — Hunt-fix cycle
-- `@fullstack-developer` — Full-stack developer
+Agent tersedia: lihat dengan `/agents` atau `list_agents()`.
 
 ## Aturan Penting
 1. Gunakan **Bahasa Indonesia** untuk komunikasi.
@@ -134,8 +130,25 @@ def _rebuild_system():
         base = active_agent["prompt"]
     else:
         base = build_system(MODE)
+
+    agents = _list_agents()
+    if agents:
+        base += "\n\n## Available Agents\n"
+        for a in agents:
+            tag = " ✅" if active_agent and a["name"] == active_agent["name"] else ""
+            base += f"- `@{a['name']}`{tag} — {a['description']}\n"
+        base += "\nGunakan `/agent <nama>` atau tool `load_agent()` untuk switch agent.\n"
+
+    skills = _list_skills()
+    if skills:
+        base += "\n## Available Skills\n"
+        for s in skills:
+            tag = " ✅" if s["name"] in active_skills else ""
+            base += f"- `{s['name']}`{tag} — {s['description']}\n"
+        base += "\nGunakan `load_skill(<nama>)` untuk memuat skill.\n"
+
     if active_skills:
-        base += "\n\n---\n## Active Skills\n"
+        base += "\n---\n## Active Skills\n"
         for name, content in active_skills.items():
             base += f"\n### {name}\n{content}\n"
     return base
@@ -282,6 +295,7 @@ def main(base_url, model, api_key, task, update):
     global MODE
 
     cfg = load()
+    reload_completions()
     if base_url: cfg["base_url"] = base_url
     if model: cfg["model"] = model
     if api_key: cfg["api_key"] = api_key
@@ -366,7 +380,7 @@ def main(base_url, model, api_key, task, update):
                     })
                 messages.append(msg)
 
-                skill_changed = False
+                rebuild = False
                 for tc in tool_calls:
                     name = tc["function"]["name"]
                     args = tc["function"]["arguments"]
@@ -378,17 +392,24 @@ def main(base_url, model, api_key, task, update):
                         sn = args.get("name", "")
                         if sn and "tidak ditemukan" not in result and "⚠️" not in result:
                             active_skills[sn] = result
-                            skill_changed = True
+                            rebuild = True
                     elif name == "unload_skill":
                         sn = args.get("name", "")
                         if sn == "all":
                             active_skills.clear()
-                            skill_changed = True
+                            rebuild = True
                         elif sn in active_skills:
                             del active_skills[sn]
-                            skill_changed = True
+                            rebuild = True
+                    elif name == "load_agent":
+                        an = args.get("name", "")
+                        agent = _load_agent(an)
+                        if agent:
+                            active_agent = agent
+                            active_skills.clear()
+                            rebuild = True
 
-                if skill_changed:
+                if rebuild:
                     system_msg["content"] = _rebuild_system()
 
                 show_status("Mikir...")
@@ -424,6 +445,7 @@ def main(base_url, model, api_key, task, update):
                     messages.clear()
                     active_skills.clear()
                     active_agent = None
+                    system_msg["content"] = _rebuild_system()
                     show_info("Conversation dihapus")
             continue
 

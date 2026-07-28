@@ -28,6 +28,9 @@ def _build_completions():
 
 ALL_WORDS = _build_completions()
 
+def reload_completions():
+    ALL_WORDS[:] = _build_completions()
+
 class TriggerCompleter(Completer):
     def get_completions(self, document, complete_event):
         word = document.get_word_before_cursor(WORD=True)
