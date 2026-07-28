@@ -242,6 +242,62 @@ curl -x http://127.0.0.1:8080 -s https://ipx.ac
 
 ---
 
+## 9 — Tor Proxy
+
+```bash
+# Jalankan Tor (default SOCKS5 di 127.0.0.1:9050)
+tor &
+# atau via service: systemctl start tor
+
+# Cek apakah Tor jalan
+curl --socks5-hostname 127.0.0.1:9050 --max-time 5 -s https://checkip.amazonaws.com
+
+# Set environment variables
+export HTTP_PROXY=socks5://127.0.0.1:9050
+export HTTPS_PROXY=socks5://127.0.0.1:9050
+export http_proxy=socks5://127.0.0.1:9050
+export https_proxy=socks5://127.0.0.1:9050
+
+# curl via Tor
+curl --socks5-hostname 127.0.0.1:9050 https://target.com
+curl -x socks5://127.0.0.1:9050 https://target.com
+
+# ffuf via Tor
+ffuf -u https://target.com/FUZZ -w wordlist.txt -x socks5://127.0.0.1:9050
+
+# nuclei via Tor
+nuclei -u https://target.com -proxy socks5://127.0.0.1:9050
+
+# httpx via Tor
+httpx -l targets.txt -proxy socks5://127.0.0.1:9050
+
+# naabu via Tor
+naabu -host target.com -proxy socks5://127.0.0.1:9050
+
+# katana via Tor
+katana -u https://target.com -proxy socks5://127.0.0.1:9050
+
+# subfinder via Tor
+subfinder -d target.com -proxy socks5://127.0.0.1:9050
+
+# Ganti identitas Tor (new circuit)
+killall -HUP tor
+# Atau via control port:
+echo -e "AUTHENTICATE\r\nSIGNAL NEWNYM\r\n" | nc 127.0.0.1 9051
+
+# Verifikasi IP berubah
+curl --socks5-hostname 127.0.0.1:9050 -s https://checkip.amazonaws.com
+
+# Tor + Privoxy (HTTP ke SOCKS bridge)
+# Install privoxy, edit /etc/privoxy/config:
+#   forward-socks5t / 127.0.0.1:9050 .
+# Then use HTTP proxy:
+export HTTP_PROXY=http://127.0.0.1:8118
+curl -x http://127.0.0.1:8118 https://ifconfig.me
+```
+
+---
+
 ## Live Testing — Append New Findings
 
 > **Aturan:** Saat live testing nemu teknik proxy BARU, tambah entry baru di sini. **JANGAN edit/hapus entry lama.**
