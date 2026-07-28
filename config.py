@@ -16,18 +16,31 @@ DEFAULT = {
     "model": "Gratis"
 }
 
+def _write_defaults(dest_dir, data_dict):
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    for name, content in data_dict.items():
+        (dest_dir / f"{name}.md").write_text(content)
+
 def _ensure_data():
     user_dir = pathlib.Path.home() / ".config" / "dwcode"
     skills_dest = user_dir / "skills"
     agents_dest = user_dir / "agents"
 
-    if not skills_dest.exists() and (DATA_DIR / "skills").exists():
-        skills_dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(DATA_DIR / "skills", skills_dest, dirs_exist_ok=True)
+    if not skills_dest.exists():
+        if (DATA_DIR / "skills").exists():
+            skills_dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(DATA_DIR / "skills", skills_dest, dirs_exist_ok=True)
+        else:
+            from embedded import DEFAULT_SKILLS
+            _write_defaults(skills_dest, DEFAULT_SKILLS)
 
-    if not agents_dest.exists() and (DATA_DIR / "agents").exists():
-        agents_dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(DATA_DIR / "agents", agents_dest, dirs_exist_ok=True)
+    if not agents_dest.exists():
+        if (DATA_DIR / "agents").exists():
+            agents_dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(DATA_DIR / "agents", agents_dest, dirs_exist_ok=True)
+        else:
+            from embedded import DEFAULT_AGENTS
+            _write_defaults(agents_dest, DEFAULT_AGENTS)
 
 def load():
     _ensure_data()

@@ -28,5 +28,4 @@ dependencies = [
 dwcode = "main:main"
 
 [tool.setuptools]
-py-modules = ["main", "config", "client", "tools", "ui"]
-package-data = {"*" = ["dwcode_data/skills/*.md", "dwcode_data/agents/*.md"]}
+py-modules = ["main", "config", "client", "tools", "ui", "embedded"]
