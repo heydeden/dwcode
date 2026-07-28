@@ -1,0 +1,32 @@
+[project]
+name = "dwcode"
+version = "0.1.0"
+description = "DWCode — CLI coding agent dengan mode plan/build, multi-agent, skill system"
+authors = [
+    {name = "Deden Wirjadinata"},
+]
+license = {text = "MIT"}
+readme = "README.md"
+keywords = ["cli", "coding-agent", "ai", "terminal", "opencode"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Code Generators",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "openai",
+    "rich",
+    "prompt_toolkit",
+    "click",
+]
+
+[project.scripts]
+dwcode = "main:main"
+
+[tool.setuptools]
+py-modules = ["main", "config", "client", "tools", "ui"]
+package-data = {"*" = ["dwcode_data/skills/*.md", "dwcode_data/agents/*.md"]}
