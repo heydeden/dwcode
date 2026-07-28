@@ -270,6 +270,8 @@ def main(base_url, model, api_key, task, update):
             console.print(Panel(f"❌ Gagal:\n{r.stderr[:300]}", title="Error", border_style="red"))
         return
 
+    global MODE
+
     cfg = load()
     if base_url: cfg["base_url"] = base_url
     if model: cfg["model"] = model
@@ -304,7 +306,6 @@ def main(base_url, model, api_key, task, update):
         client = LLMClient(cfg["base_url"], cfg["api_key"], cfg["model"])
         tool_schemas = get_schemas()
 
-    global MODE
     MODE = "plan"
     set_prompt_mode(MODE)
 
