@@ -47,12 +47,12 @@ echo 'while true; do node /usr/local/lib/node_modules/9router/cli.js --tray --sk
 ## Install
 
 ```bash
-pip install git+https://github.com/dedenwirjadinata/dwcode
+pip install git+https://github.com/heydeden/dwcode
 ```
 
 Atau lokal:
 ```bash
-git clone https://github.com/dedenwirjadinata/dwcode
+git clone https://github.com/heydeden/dwcode
 cd dwcode
 pip install .
 ```
