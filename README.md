@@ -41,6 +41,11 @@ dwcode --api-key sk-xxx
 pip install git+https://github.com/heydeden/dwcode
 ```
 
+Untuk sistem dengan proteksi `externally-managed-environment` (Debian/Ubuntu 24.04+):
+```bash
+pip install --break-system-packages git+https://github.com/heydeden/dwcode
+```
+
 Atau lokal:
 ```bash
 git clone https://github.com/heydeden/dwcode
