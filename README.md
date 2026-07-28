@@ -21,13 +21,7 @@ pkg install rust binutils python-pip
 pip install git+https://github.com/heydeden/dwcode
 ```
 
-Rust diperlukan karena dependency `jiter` perlu di-compile.
-Tapi kalo mau skip Rust, download wheel pre-built dari [Releases](https://github.com/heydeden/dwcode/releases):
-
-```bash
-# Download .whl dari https://github.com/heydeden/dwcode/releases
-pip install dwcode-*.whl
-```
+Rust diperlukan karena dependency `jiter` perlu di-compile. Ini cuma sekali, berikutnya langsung cepet.
 
 ```bash
 # Install 9router
