@@ -286,9 +286,7 @@ def main(base_url, model, api_key, task, update):
         console.print(Panel(
             "Belum ada API key & model.\n\n"
             "Ketik di terminal:\n\n"
-            "  dwcode \\\n"
-            "  --api-key <api_key_9router> \\\n"
-            "  --model <nama_model>\n\n"
+            "  dwcode --api-key <api_key_9router> --model <nama_model>\n\n"
             "Contoh:\n"
             "  dwcode --api-key sk-xxx --model Gratis\n\n"
             "Atau pake env:\n"
