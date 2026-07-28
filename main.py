@@ -358,6 +358,14 @@ def main(base_url, model, api_key, task):
         if not user_input:
             continue
 
+        if user_input == "__TOGGLE__":
+            MODE = "build" if MODE == "plan" else "plan"
+            set_prompt_mode(MODE)
+            system_msg["content"] = _rebuild_system()
+            if messages and messages[0].get("role") == "system":
+                messages[0] = system_msg
+            continue
+
         if user_input.startswith("/"):
             if handle_command(user_input):
                 cmd = user_input.strip().split()[0]
