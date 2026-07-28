@@ -284,17 +284,27 @@ def main(base_url, model, api_key, task, update):
 
     if not cfg.get("api_key"):
         console.print(Panel(
-            "⚠️  Belum ada API key.\n\n"
-            "Set dengan salah satu:\n"
+            "Belum ada API key & model.\n\n"
+            "Ketik di terminal:\n\n"
+            "  dwcode \\\n"
+            "  --api-key <api_key_9router> \\\n"
+            "  --model <nama_model>\n\n"
+            "Contoh:\n"
+            "  dwcode --api-key sk-xxx --model Gratis\n\n"
+            "Atau pake env:\n"
             "  export DWCODE_API_KEY=sk-xxx\n"
-            "  dwcode --api-key sk-xxx\n"
-            "  ~/.config/dwcode/config.json",
-            title="DWCode — API Key Required",
+            "  export DWCODE_MODEL=Gratis\n"
+            "  dwcode\n\n"
+            "Command: /exit — keluar    /help — bantuan",
+            title="DWCode — First Run",
             border_style="yellow",
         ))
-
-    client = LLMClient(cfg["base_url"], cfg["api_key"] or "skip", cfg["model"])
-    tool_schemas = get_schemas()
+        client = None
+        tool_schemas = None
+    else:
+        show_header(MODE, cfg["model"])
+        client = LLMClient(cfg["base_url"], cfg["api_key"], cfg["model"])
+        tool_schemas = get_schemas()
 
     global MODE
     MODE = "plan"
@@ -306,6 +316,9 @@ def main(base_url, model, api_key, task, update):
     system_msg = {"role": "system", "content": build_system(MODE)}
 
     def run_conversation(user_input):
+        if not client:
+            show_error("Belum ada API key. Set dulu: dwcode --api-key <key> --model <model>")
+            return
         global MODE
         messages.append({"role": "user", "content": user_input})
 
