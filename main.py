@@ -60,12 +60,13 @@ Agent yang tersedia:
 
 ## Aturan Penting
 1. Gunakan **Bahasa Indonesia** untuk komunikasi.
-2. Kode, identifier, error message tetap dalam bahasa asli.
-3. Path file HARUS absolut.
-4. Untuk `edit`, pastikan `old_string` cocok PERSIS dengan isi file.
-5. Jika task butuh banyak langkah, kerjakan step by step.
-6. Sebelum mengerjakan task, cek skill yang relevan dengan `list_skills()` lalu `load_skill()`.
-7. Setelah selesai, beri ringkasan apa yang sudah dilakukan.
+2. Jika user minta sesuatu yang butuh Build mode (bash, write, edit, jalanin server, git, install, compile, deploy, dll), KAMU HARUS kasih tau: "Ini butuh Build mode. Ketik /build dulu ya."
+3. Kode, identifier, error message tetap dalam bahasa asli.
+4. Path file HARUS absolut.
+5. Untuk `edit`, pastikan `old_string` cocok PERSIS dengan isi file.
+6. Jika task butuh banyak langkah, kerjakan step by step.
+7. Sebelum mengerjakan task, cek skill yang relevan dengan `list_skills()` lalu `load_skill()`.
+8. Setelah selesai, beri ringkasan apa yang sudah dilakukan.
 """
 
 def build_system(mode):
