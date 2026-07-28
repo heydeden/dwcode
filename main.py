@@ -4,6 +4,7 @@ import click, json, os, sys, pathlib
 from config import load, save, SKILLS_DIR, AGENTS_DIRS
 from client import LLMClient
 from tools import execute, get_schemas
+from rich.panel import Panel
 from ui import console, get_input, show_header, AssistantStream, show_info, show_error, show_status, set_prompt_mode
 
 MODE = "plan"
