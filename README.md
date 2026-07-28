@@ -8,40 +8,9 @@ CLI coding agent di terminal — mode PLAN (read-only) dan BUILD (full access). 
 npm install -g 9router
 ```
 
-Jalankan 9router:
+Jalankan manual tiap mau pake:
 ```bash
-9router start
-```
-
-### Auto-start 9router (anti-kill)
-
-**Linux (systemd):**
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable 9router
-sudo systemctl restart 9router
-```
-9router otomatis restart dalam 3 detik kalo crash. CPU dibatasi 50%, RAM max 512MB. Gak bakal mati karena OOM.
-
-**Termux:**
-```bash
-pkg install termux-boot
-mkdir -p ~/.termux/boot/
-cat > ~/.termux/boot/9router.sh << 'EOF'
-#!/data/data/com.termux/files/usr/bin/sh
-termux-wake-lock
-while true; do
-  /usr/local/lib/node_modules/9router/cli.js --tray --skip-update -p 20128
-  sleep 3
-done
-EOF
-chmod +x ~/.termux/boot/9router.sh
-```
-Loop `while true` — kalo crash restart sendiri.
-
-**Userland (Android):**
-```bash
-echo 'while true; do node /usr/local/lib/node_modules/9router/cli.js --tray --skip-update -p 20128; sleep 3; done &' >> ~/.bashrc
+node /usr/local/lib/node_modules/9router/cli.js --tray --skip-update -p 20128
 ```
 
 ## Install
