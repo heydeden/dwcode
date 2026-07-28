@@ -268,6 +268,7 @@ def main(base_url, model, api_key, task, update):
             console.print("⚠️  System python dilindungi, coba dengan --break-system-packages...")
             r = subprocess.run(
                 [pip, "install", "--break-system-packages",
+                 "--ignore-installed",
                  "--upgrade", "--force-reinstall",
                  "git+https://github.com/heydeden/dwcode"],
                 capture_output=True, text=True, timeout=120,
