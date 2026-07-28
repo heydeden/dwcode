@@ -10,6 +10,8 @@ AGENTS_DIRS = [
 ]
 DATA_DIR = PACKAGE_DIR / "dwcode_data"
 
+SKILL_VERSION = "2"
+
 DEFAULT = {
     "base_url": "http://127.0.0.1:20128/v1",
     "api_key": "",
@@ -25,8 +27,15 @@ def _ensure_data():
     user_dir = pathlib.Path.home() / ".config" / "dwcode"
     skills_dest = user_dir / "skills"
     agents_dest = user_dir / "agents"
+    version_file = user_dir / ".version"
 
-    if not skills_dest.exists():
+    prev_version = version_file.read_text().strip() if version_file.exists() else ""
+
+    needs_refresh = prev_version != SKILL_VERSION
+
+    if not skills_dest.exists() or needs_refresh:
+        if skills_dest.exists():
+            shutil.rmtree(skills_dest)
         if (DATA_DIR / "skills").exists():
             skills_dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copytree(DATA_DIR / "skills", skills_dest, dirs_exist_ok=True)
@@ -34,13 +43,18 @@ def _ensure_data():
             from embedded import DEFAULT_SKILLS
             _write_defaults(skills_dest, DEFAULT_SKILLS)
 
-    if not agents_dest.exists():
+    if not agents_dest.exists() or needs_refresh:
+        if agents_dest.exists():
+            shutil.rmtree(agents_dest)
         if (DATA_DIR / "agents").exists():
             agents_dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copytree(DATA_DIR / "agents", agents_dest, dirs_exist_ok=True)
         else:
             from embedded import DEFAULT_AGENTS
             _write_defaults(agents_dest, DEFAULT_AGENTS)
+
+    if needs_refresh:
+        version_file.write_text(SKILL_VERSION)
 
 def load():
     _ensure_data()
