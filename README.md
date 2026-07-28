@@ -13,6 +13,28 @@ Jalankan manual tiap mau pake:
 node /usr/local/lib/node_modules/9router/cli.js --tray --skip-update -p 20128
 ```
 
+## Termux
+
+```bash
+pkg update
+pkg install rust binutils python-pip
+pip install git+https://github.com/heydeden/dwcode
+```
+
+Rust diperlukan karena dependency `jiter` perlu di-compile.
+
+```bash
+# Install 9router
+pkg install nodejs
+npm install -g 9router
+
+# Jalankan 9router
+node /data/data/com.termux/files/usr/lib/node_modules/9router/cli.js --tray --skip-update -p 20128
+
+# Jalankan DWCode
+dwcode --api-key sk-xxx
+```
+
 ## Install
 
 ```bash
