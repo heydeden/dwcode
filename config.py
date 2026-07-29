@@ -7,6 +7,7 @@ AGENTS_DIRS = [
     pathlib.Path.home() / ".config" / "dwcode" / "agents",
     pathlib.Path("/home/userland/.config/dwcode/agents"),
     pathlib.Path("/root/.config/dwcode/agents"),
+    pathlib.Path(os.environ.get("USERPROFILE", "C:/Users/Default")) / ".config" / "dwcode" / "agents",
 ]
 DATA_DIR = PACKAGE_DIR / "dwcode_data"
 
@@ -25,6 +26,10 @@ def _write_defaults(dest_dir, data_dict):
 
 def _ensure_data():
     user_dir = pathlib.Path.home() / ".config" / "dwcode"
+    if os.name == 'nt' and not user_dir.exists():
+        alt = pathlib.Path(os.environ.get("USERPROFILE", "C:/Users/Default")) / ".config" / "dwcode"
+        if alt.exists():
+            user_dir = alt
     skills_dest = user_dir / "skills"
     agents_dest = user_dir / "agents"
     version_file = user_dir / ".version"

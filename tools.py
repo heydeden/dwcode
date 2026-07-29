@@ -1,8 +1,14 @@
-import os, subprocess, json
+import os, subprocess, json, platform
 from pathlib import Path
 from config import SKILLS_DIR, AGENTS_DIRS
 
-BLOCKED_COMMANDS = ["rm", "sudo", "dd", "mkfs", ">", ">>", "|", "chmod", "chown", "kill"]
+IS_WINDOWS = platform.system() == "Windows"
+
+LINUX_BLOCKED = ["rm", "sudo", "dd", "mkfs", "chmod", "chown", "kill"]
+WINDOWS_BLOCKED = ["format", "del", "rd", "rmdir", "regedit", "shutdown", "taskkill"]
+SHARED_BLOCKED = [">", ">>", "|"]
+
+BLOCKED_COMMANDS = LINUX_BLOCKED + (WINDOWS_BLOCKED if IS_WINDOWS else []) + SHARED_BLOCKED
 
 TOOLS = {}
 
@@ -91,7 +97,7 @@ tool(
 
 tool(
     name="bash",
-    description="Execute a shell command. Returns stdout, stderr, and exit code.",
+    description=f"Execute a shell command on {platform.system()} ({platform.machine()}). Returns stdout, stderr, and exit code.",
     params={
         "command": {"type": "string", "description": "Shell command to execute"},
         "workdir": {"type": "string", "description": "Working directory (default: current)"},
@@ -248,14 +254,24 @@ def _bash(args):
     cmd = args["command"]
     cwd = args.get("workdir")
 
-    result = subprocess.run(
-        cmd,
-        shell=True,
-        capture_output=True,
-        text=True,
-        cwd=cwd,
-        timeout=60,
-    )
+    if IS_WINDOWS:
+        full_cmd = ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", cmd]
+        result = subprocess.run(
+            full_cmd,
+            capture_output=True,
+            text=True,
+            cwd=cwd,
+            timeout=60,
+        )
+    else:
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            cwd=cwd,
+            timeout=60,
+        )
 
     parts = []
     if result.stdout:
