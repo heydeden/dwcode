@@ -3,7 +3,7 @@ import click, json, os, sys, pathlib
 
 from config import load, save, SKILLS_DIR, AGENTS_DIRS
 from client import LLMClient
-from tools import execute, get_schemas
+from tools import execute, get_schemas, env_info
 from rich.panel import Panel
 from ui import console, get_input, show_header, AssistantStream, show_info, show_error, show_status, set_prompt_mode, reload_completions
 
@@ -34,7 +34,12 @@ BUILD_RULES = """- ✅ Semua operasi diizinkan
 
 Jangan tanyakan "switch ke build mode" — kamu SUDAH di Build mode. Langsung kerjakan apa yang user minta."""
 
+ENV_INFO = env_info()
+
 SYSTEM_PROMPT = """Kamu adalah **DWCode**, asisten coding di terminal. Tugasmu membantu user mengerjakan task coding dengan tool yang tersedia.
+
+## Environment
+{env}
 
 ## Mode Saat Ini: {mode}
 
@@ -73,7 +78,7 @@ Agent tersedia: lihat dengan `/agents` atau `list_agents()`.
 
 def build_system(mode):
     rules = PLAN_RULES if mode == "plan" else BUILD_RULES
-    return SYSTEM_PROMPT.format(mode=mode.upper(), rules=rules)
+    return SYSTEM_PROMPT.format(env=ENV_INFO, mode=mode.upper(), rules=rules)
 
 active_skills = {}
 active_agent = None

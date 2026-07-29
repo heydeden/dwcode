@@ -4,6 +4,22 @@ from config import SKILLS_DIR, AGENTS_DIRS
 
 IS_WINDOWS = platform.system() == "Windows"
 
+def _detect_shell():
+    if IS_WINDOWS:
+        return "PowerShell"
+    shell = os.environ.get("SHELL", "")
+    if shell:
+        return os.path.basename(shell)
+    return "sh"
+
+CURRENT_SHELL = _detect_shell()
+
+def env_info():
+    return f"""OS: {platform.system()} ({platform.release()})
+Arch: {platform.machine()}
+Shell: {CURRENT_SHELL}
+Python: {platform.python_version()}"""
+
 LINUX_BLOCKED = ["rm", "sudo", "dd", "mkfs", "chmod", "chown", "kill"]
 WINDOWS_BLOCKED = ["format", "del", "rd", "rmdir", "regedit", "shutdown", "taskkill"]
 SHARED_BLOCKED = [">", ">>", "|"]
@@ -97,7 +113,7 @@ tool(
 
 tool(
     name="bash",
-    description=f"Execute a shell command on {platform.system()} ({platform.machine()}). Returns stdout, stderr, and exit code.",
+    description=f"Execute a shell command on {platform.system()} ({platform.machine()}). Shell: {CURRENT_SHELL}. Returns stdout, stderr, and exit code.",
     params={
         "command": {"type": "string", "description": "Shell command to execute"},
         "workdir": {"type": "string", "description": "Working directory (default: current)"},
