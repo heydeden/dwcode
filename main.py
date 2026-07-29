@@ -324,7 +324,7 @@ def main(base_url, model, api_key, task, update):
             "Ketik di terminal:\n\n"
             "  dwcode --api-key <api_key_9router> --model <nama_model>\n\n"
             "Contoh:\n"
-            "  dwcode --api-key sk-xxx --model Gratis\n\n"
+            "  dwcode --api-key sk-xxx --model Gratis\n"
             "Atau pake env:\n"
             "  export DWCODE_API_KEY=sk-xxx\n"
             "  export DWCODE_MODEL=Gratis\n"

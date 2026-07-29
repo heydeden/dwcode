@@ -81,12 +81,14 @@ pip install .
 
 ```bash
 # 1. Environment variable
-export DWCODE_API_KEY=sk-xxx   # Linux/Termux
-$env:DWCODE_API_KEY="sk-xxx"   # PowerShell
+export DWCODE_API_KEY=sk-xxx          # Linux/Termux
+export DWCODE_MODEL=Gratis
+$env:DWCODE_API_KEY="sk-xxx"          # PowerShell
+$env:DWCODE_MODEL="Gratis"
 dwcode
 
-# 2. CLI flag
-dwcode --api-key sk-xxx
+# 2. CLI flag (1 baris)
+dwcode --api-key sk-xxx --model Gratis
 
 # 3. Config file
 # ~/.config/dwcode/config.json
@@ -113,9 +115,9 @@ Environment variables:
 ## Cara pake
 
 ```bash
-dwcode                             # interactive mode
-dwcode -t "baca file config.py"    # single task
-dwcode --api-key sk-xxx            # override API key
+dwcode                                         # interactive mode
+dwcode --api-key sk-xxx --model Gratis         # + override key & model
+dwcode -t "baca file config.py"                # single task (non-interactive)
 ```
 
 ## Commands
