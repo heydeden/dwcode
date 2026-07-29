@@ -2,56 +2,78 @@
 
 CLI coding agent di terminal — mode PLAN (read-only) dan BUILD (full access). Multi-agent, skill system, autocomplete.
 
-## Prerequisites — 9router (wajib)
+Cross-platform: **Linux · Termux · Windows (PowerShell)**.
+
+---
+
+## Install
+
+### Linux (Debian/Ubuntu)
 
 ```bash
+# Install 9router (wajib)
 npm install -g 9router
+
+# Install DWCode
+pip install git+https://github.com/heydeden/dwcode
+
+# Kalau kena externally-managed-environment:
+pip install --break-system-packages git+https://github.com/heydeden/dwcode
 ```
 
-Jalankan manual tiap mau pake:
+Jalankan 9router:
 ```bash
 node /usr/local/lib/node_modules/9router/cli.js --tray --skip-update -p 20128
 ```
 
-## Termux
+### Termux (Android)
 
 ```bash
-pkg update
-pkg install rust binutils python-pip
-pip install git+https://github.com/heydeden/dwcode
-```
+# Update & install dependencies
+pkg update && pkg install rust binutils python-pip nodejs
 
-Rust diperlukan karena dependency `jiter` perlu di-compile. Ini cuma sekali, berikutnya langsung cepet.
-
-```bash
 # Install 9router
-pkg install nodejs
 npm install -g 9router
 
-# Jalankan 9router
-node /data/data/com.termux/files/usr/lib/node_modules/9router/cli.js --tray --skip-update -p 20128
-
-# Jalankan DWCode
-dwcode --api-key sk-xxx
-```
-
-## Install
-
-```bash
+# Install DWCode
 pip install git+https://github.com/heydeden/dwcode
 ```
 
-Untuk sistem dengan proteksi `externally-managed-environment` (Debian/Ubuntu 24.04+):
+> Rust diperlukan karena dependency `jiter` perlu di-compile. Cuma sekali, berikutnya langsung cepet.
+
+Jalankan 9router:
 ```bash
-pip install --break-system-packages git+https://github.com/heydeden/dwcode
+node /data/data/com.termux/files/usr/lib/node_modules/9router/cli.js --tray --skip-update -p 20128
 ```
 
-Atau lokal:
+### Windows (PowerShell)
+
+```powershell
+# Install Python 3.10+ dari https://python.org — pastikan "Add to PATH" dicentang
+
+# Install 9router
+npm install -g 9router
+
+# Install DWCode
+pip install git+https://github.com/heydeden/dwcode
+```
+
+Jalankan 9router:
+```powershell
+node "$(Get-Command node).Source.Replace('node.exe', '')node_modules\9router\cli.js" --tray --skip-update -p 20128
+```
+
+Atau cari path `9router/cli.js` manual di `%APPDATA%\npm\node_modules\9router\`.
+
+### Local install (semua OS)
+
 ```bash
 git clone https://github.com/heydeden/dwcode
 cd dwcode
 pip install .
 ```
+
+---
 
 ## API Key
 
@@ -59,7 +81,8 @@ pip install .
 
 ```bash
 # 1. Environment variable
-export DWCODE_API_KEY=sk-xxx
+export DWCODE_API_KEY=sk-xxx   # Linux/Termux
+$env:DWCODE_API_KEY="sk-xxx"   # PowerShell
 dwcode
 
 # 2. CLI flag
