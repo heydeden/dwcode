@@ -351,52 +351,6 @@ async function runConversation(userInput, client, toolSchemas, messages, systemM
   }
 }
 
-async function doctor() {
-  const pkgDir = path.resolve(__dirname, "..");
-  const dataDir = path.join(pkgDir, "data");
-  const userDir = path.join(require("os").homedir(), ".config", "dwcode");
-  const lines = [];
-  try {
-    const pkg = JSON.parse(fs.readFileSync(path.join(pkgDir, "package.json"), "utf-8"));
-    lines.push(`[OK] Package: dwcode v${pkg.version}`);
-  } catch {
-    lines.push("[ERR] Package: tidak ditemukan");
-  }
-  lines.push(`     Lokasi: ${pkgDir}`);
-
-  if (fs.existsSync(dataDir)) {
-    const skills = fs.readdirSync(path.join(dataDir, "skills")).filter((f) => f.endsWith(".md"));
-    const agents = fs.readdirSync(path.join(dataDir, "agents")).filter((f) => f.endsWith(".md"));
-    lines.push(`[OK] Data: data/ ditemukan (${skills.length} skills, ${agents.length} agents)`);
-  } else {
-    lines.push("[ERR] Data: data/ tidak ditemukan");
-  }
-
-  if (fs.existsSync(userDir)) {
-    const sDir = path.join(userDir, "skills");
-    const aDir = path.join(userDir, "agents");
-    const si = fs.existsSync(sDir) ? fs.readdirSync(sDir).filter((f) => f.endsWith(".md")).length : 0;
-    const ai = fs.existsSync(aDir) ? fs.readdirSync(aDir).filter((f) => f.endsWith(".md")).length : 0;
-    lines.push(`[OK] Config: ~/.config/dwcode/ (${si} skills, ${ai} agents)`);
-  } else {
-    lines.push("[..] Config: ~/.config/dwcode/ belum ada (akan dibuat saat pertama dwcode jalan)");
-  }
-
-  const { execSync } = require("child_process");
-  try {
-    const which = IS_WINDOWS
-      ? execSync("where dwcode", { stdio: "pipe" }).toString().trim()
-      : execSync("which dwcode", { stdio: "pipe" }).toString().trim();
-    lines.push(`[OK] Entry point: dwcode -> ${which}`);
-  } catch {
-    lines.push("[OK] Entry point: dwcode (npm global bin)");
-    const npmBin = execSync("npm root -g", { stdio: "pipe" }).toString().trim();
-    lines.push(`     Global npm: ${path.join(npmBin, ".bin")}`);
-  }
-
-  console.log(panel("DWCode Doctor", lines.join("\n"), "blue"));
-}
-
 async function update() {
   const { execSync } = require("child_process");
   console.log("⏳ Update DWCode...");
@@ -418,14 +372,12 @@ async function main() {
     .option("--model <model>", "Model name")
     .option("--api-key <key>", "API key")
     .option("-t, --task <task>", "Single task (non-interactive)")
-    .option("--update", "Update DWCode ke versi terbaru")
-    .option("--doctor", "Cek status instalasi");
+    .option("--update", "Update DWCode ke versi terbaru");
 
   program.parse(process.argv);
   const opts = program.opts();
 
   if (opts.update) return await update();
-  if (opts.doctor) return await doctor();
 
   const cfg = load();
   if (opts.baseUrl) cfg.base_url = opts.baseUrl;

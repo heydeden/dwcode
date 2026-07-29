@@ -74,7 +74,6 @@ Environment variables:
 dwcode                                         # interactive mode
 dwcode --api-key sk-xxx --model Gratis         # + override key & model
 dwcode -t "baca file config.py"                # single task (non-interactive)
-dwcode --doctor                                # cek status instalasi
 dwcode --update                                # update ke versi terbaru
 ```
 
