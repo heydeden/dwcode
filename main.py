@@ -278,9 +278,10 @@ def handle_command(cmd_line):
 @click.option("--api-key", help="API key")
 @click.option("--task", "-t", help="Single task (non-interactive)")
 @click.option("--update", is_flag=True, help="Update DWCode ke versi terbaru")
-def main(base_url, model, api_key, task, update):
+@click.option("--doctor", is_flag=True, help="Cek status instalasi")
+def main(base_url, model, api_key, task, update, doctor):
     if update:
-        import subprocess, sys
+        import subprocess
         console.print("⏳ Update DWCode...")
         pip = sys.executable.replace("python", "pip")
         r = subprocess.run(
@@ -301,6 +302,62 @@ def main(base_url, model, api_key, task, update):
             console.print(Panel("✅ DWCode updated!", title="Update", border_style="green"))
         else:
             console.print(Panel(f"❌ Gagal:\n{r.stderr[:300]}", title="Error", border_style="red"))
+        return
+
+    if doctor:
+        import importlib.metadata, shutil, os
+        pkg_dir = pathlib.Path(__file__).parent.absolute()
+        data_dir = pkg_dir / "dwcode_data"
+        user_dir = pathlib.Path.home() / ".config" / "dwcode"
+        lines = []
+        try:
+            ver = importlib.metadata.version("dwcode")
+            lines.append(f"[OK] Package: dwcode v{ver}")
+        except:
+            lines.append("[ERR] Package: dwcode tidak terinstall dengan pip")
+
+        lines.append(f"     Lokasi: {pkg_dir}")
+
+        if data_dir.exists():
+            skills = list(data_dir.glob("skills/*.md"))
+            agents = list(data_dir.glob("agents/*.md"))
+            lines.append(f"[OK] Data: dwcode_data/ ditemukan ({len(skills)} skills, {len(agents)} agents)")
+        else:
+            lines.append("[ERR] Data: dwcode_data/ tidak ditemukan")
+            try:
+                from embedded import DEFAULT_SKILLS, DEFAULT_AGENTS
+                lines.append(f"     Fallback: embedded.py ({len(DEFAULT_SKILLS)} skills, {len(DEFAULT_AGENTS)} agents)")
+            except:
+                lines.append("     Fallback: embedded.py tidak bisa di-load")
+
+        if user_dir.exists():
+            skills_installed = list(user_dir.glob("skills/*.md"))
+            agents_installed = list(user_dir.glob("agents/*.md"))
+            lines.append(f"[OK] Config: ~/.config/dwcode/ ({len(skills_installed)} skills, {len(agents_installed)} agents)")
+        else:
+            lines.append("[..] Config: ~/.config/dwcode/ belum ada (akan dibuat saat pertama dwcode jalan)")
+
+        script_path = shutil.which("dwcode")
+        if script_path:
+            lines.append(f"[OK] Entry point: dwcode -> {script_path}")
+        else:
+            lines.append("[ERR] Entry point: dwcode tidak ditemukan di PATH")
+            python_dir = pathlib.Path(sys.executable).parent
+            scripts_dir = python_dir / "Scripts"
+            if scripts_dir.exists():
+                stem = scripts_dir / "dwcode.exe"
+                if stem.exists():
+                    lines.append(f"     File ada di {stem}")
+                    lines.append(f"     Tapi {scripts_dir} tidak ada di PATH")
+                    lines.append(f"     -> Tambahkan: `$env:PATH += \";{scripts_dir}\"`")
+                else:
+                    lines.append(f"     Tidak ada dwcode.exe di {scripts_dir}")
+
+        console.print(Panel(
+            "\n".join(lines),
+            title="DWCode Doctor",
+            border_style="blue",
+        ))
         return
 
     global MODE

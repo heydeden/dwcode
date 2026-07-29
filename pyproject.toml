@@ -29,3 +29,5 @@ dwcode = "main:main"
 
 [tool.setuptools]
 py-modules = ["main", "config", "client", "tools", "ui", "embedded"]
+packages = ["dwcode_data", "dwcode_data.skills", "dwcode_data.agents"]
+include-package-data = true

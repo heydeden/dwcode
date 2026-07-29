@@ -56,15 +56,20 @@ def _(event):
 def _(event):
     event.app.current_buffer.validate_and_handle()
 
-session = PromptSession(
-    history=InMemoryHistory(),
-    style=pt_style,
-    completer=TriggerCompleter(),
-    complete_while_typing=True,
-    key_bindings=kb,
-)
-
+_session = None
 _prompt_mode = "plan"
+
+def _get_session():
+    global _session
+    if _session is None:
+        _session = PromptSession(
+            history=InMemoryHistory(),
+            style=pt_style,
+            completer=TriggerCompleter(),
+            complete_while_typing=True,
+            key_bindings=kb,
+        )
+    return _session
 
 def set_prompt_mode(mode):
     global _prompt_mode
@@ -75,7 +80,7 @@ PROMPT_EMOJIS = {"plan": "🤔", "build": "🔧"}
 def get_input():
     try:
         emoji = PROMPT_EMOJIS.get(_prompt_mode, "❯")
-        return session.prompt(f"{emoji} {_prompt_mode} > ").strip()
+        return _get_session().prompt(f"{emoji} {_prompt_mode} > ").strip()
     except (EOFError, KeyboardInterrupt):
         return None
 
