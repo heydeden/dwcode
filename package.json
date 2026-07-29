@@ -1,0 +1,21 @@
+{
+  "name": "dwcode",
+  "version": "0.2.0",
+  "description": "DWCode — CLI coding agent dengan mode plan/build, multi-agent, skill system",
+  "license": "MIT",
+  "bin": {
+    "dwcode": "./bin/dwcode.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^12.1.0",
+    "diff": "^7.0.0",
+    "fast-glob": "^3.3.2",
+    "marked": "^14.1.0",
+    "marked-terminal": "^7.2.1",
+    "openai": "^4.73.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

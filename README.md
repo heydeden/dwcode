@@ -8,69 +8,24 @@ Cross-platform: **Linux · Termux · Windows (PowerShell)**.
 
 ## Install
 
-### Linux (Debian/Ubuntu)
+### Semua OS (Linux / Termux / Windows)
+
+Persyaratan: **Node.js 18+**
 
 ```bash
-# Install 9router (wajib)
+# Install 9router (proksi wajib)
 npm install -g 9router
 
-# Install DWCode
-pip install git+https://github.com/heydeden/dwcode
-
-# Kalau kena externally-managed-environment:
-pip install --break-system-packages git+https://github.com/heydeden/dwcode
+# Install DWCode — langsung global, otomatis di PATH
+npm install -g git+https://github.com/heydeden/dwcode
 ```
 
-Jalankan 9router:
-```bash
-node /usr/local/lib/node_modules/9router/cli.js --tray --skip-update -p 20128
-```
-
-### Termux (Android)
-
-```bash
-# Update & install dependencies
-pkg update && pkg install rust binutils python-pip nodejs
-
-# Install 9router
-npm install -g 9router
-
-# Install DWCode
-pip install git+https://github.com/heydeden/dwcode
-```
-
-> Rust diperlukan karena dependency `jiter` perlu di-compile. Cuma sekali, berikutnya langsung cepet.
-
-Jalankan 9router:
-```bash
-node /data/data/com.termux/files/usr/lib/node_modules/9router/cli.js --tray --skip-update -p 20128
-```
-
-### Windows (PowerShell)
-
-```powershell
-# Install Python 3.10+ dari https://python.org — pastikan "Add to PATH" dicentang
-
-# Install 9router
-npm install -g 9router
-
-# Install DWCode
-pip install git+https://github.com/heydeden/dwcode
-```
-
-Jalankan 9router:
-```powershell
-node "$(Get-Command node).Source.Replace('node.exe', '')node_modules\9router\cli.js" --tray --skip-update -p 20128
-```
-
-Atau cari path `9router/cli.js` manual di `%APPDATA%\npm\node_modules\9router\`.
-
-### Local install (semua OS)
+### Local install
 
 ```bash
 git clone https://github.com/heydeden/dwcode
 cd dwcode
-pip install .
+npm install -g .
 ```
 
 ---
@@ -80,12 +35,13 @@ pip install .
 3 cara (prioritas: env > flag > file):
 
 ```bash
-# 1. Environment variable
-export DWCODE_API_KEY=sk-xxx          # Linux/Termux
+# 1. Environment variable (Linux/Termux)
+export DWCODE_API_KEY=sk-xxx
 export DWCODE_MODEL=Gratis
-$env:DWCODE_API_KEY="sk-xxx"          # PowerShell
+
+# 1. Environment variable (PowerShell)
+$env:DWCODE_API_KEY="sk-xxx"
 $env:DWCODE_MODEL="Gratis"
-dwcode
 
 # 2. CLI flag (1 baris)
 dwcode --api-key sk-xxx --model Gratis
@@ -118,6 +74,8 @@ Environment variables:
 dwcode                                         # interactive mode
 dwcode --api-key sk-xxx --model Gratis         # + override key & model
 dwcode -t "baca file config.py"                # single task (non-interactive)
+dwcode --doctor                                # cek status instalasi
+dwcode --update                                # update ke versi terbaru
 ```
 
 ## Commands
